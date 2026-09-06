@@ -14,6 +14,7 @@ jobs:
       - name: Restore Android project
         run: |
           cat apk_payload/part_* | tr -d '\n' | base64 -d > /tmp/khata.tar.gz
+          gzip -t /tmp/khata.tar.gz
           mkdir -p khata-apk
           tar -xzf /tmp/khata.tar.gz -C khata-apk
           sed -i 's/import android.app.PrintManager;/import android.print.PrintManager;/' khata-apk/app/src/main/java/com/arslanprinters/khata/MainActivity.java
