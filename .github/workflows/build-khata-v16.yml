@@ -1,0 +1,46 @@
+name: Build Arslan Printers Khata V16 APK
+on:
+  push:
+    branches:
+      - chatgpt/khata-apk-v16
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore Android project
+        run: |
+          cat apk_payload/part_* | tr -d '\n' | base64 -d > /tmp/khata.tar.gz
+          mkdir -p khata-apk
+          tar -xzf /tmp/khata.tar.gz -C khata-apk
+          sed -i 's/import android.app.PrintManager;/import android.print.PrintManager;/' khata-apk/app/src/main/java/com/arslanprinters/khata/MainActivity.java
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Build debug APK
+        working-directory: khata-apk
+        run: gradle --no-daemon assembleDebug
+
+      - name: Rename APK
+        run: cp khata-apk/app/build/outputs/apk/debug/app-debug.apk khata-apk/app/build/outputs/apk/debug/Arslan_Printers_Khata_V16.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Arslan-Printers-Khata-V16-APK
+          path: khata-apk/app/build/outputs/apk/debug/Arslan_Printers_Khata_V16.apk
+          if-no-files-found: error
