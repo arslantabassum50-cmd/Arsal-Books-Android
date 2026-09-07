@@ -1,0 +1,29 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.arslanprinters.khata.v18real'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.arslanprinters.khata.v18real'
+        minSdk 26
+        targetSdk 34
+        versionCode 18
+        versionName '18.1'
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+        }
+        release {
+            minifyEnabled false
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core:1.13.1'
+}
